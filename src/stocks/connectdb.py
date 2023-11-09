@@ -1,5 +1,6 @@
 import psycopg2
 
+
 class Database:
     def __init__(self, host, database, user, password) -> None:
         self.host = host
@@ -12,6 +13,7 @@ class Database:
     def __del__(self):
         if self.conn is not None:
             self.conn.close()
+
 
 if __name__ == '__main__':
     db = Database(host="localhost", database="pea_tomtom", user="postgres", password="postgres")

@@ -1,6 +1,5 @@
-from data.connectdb import Database
+from stocks.connectdb import Database
 import yfinance as yf
-from termcolor import colored
 
 import threading
 import concurrent.futures
@@ -8,8 +7,6 @@ import time
 
 import configparser
 import pathlib
-
-MULTITHREADS = False
 
 # DB connection
 config = configparser.ConfigParser()
@@ -151,27 +148,14 @@ def load_stocks(online=True, limit = None) -> list:
 
     tic = time.perf_counter()
 
-    if MULTITHREADS:
-        threads = []
+    with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+        futures = []
         for row in rows:
             s = Stock()
-            t = threading.Thread(target=s.load, args=(row, online))
-            t.name =row[1]
-            threads.append(t)
-            t.start()
             stocks.append(s)
-
-        for t in threads:
-            t.join()
-    else:
-        with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
-            futures = []
-            for row in rows:
-                s = Stock()
-                stocks.append(s)
-                futures.append(
-                    executor.submit(s.load, row, online)
-                )
+            futures.append(
+                executor.submit(s.load, row, online)
+            )
     
     for s in stocks:
         s.store()
