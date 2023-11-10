@@ -4,6 +4,7 @@ import yfinance as yf
 import threading
 import concurrent.futures
 import time
+from datetime import datetime
 
 import configparser
 import pathlib
@@ -86,6 +87,7 @@ class Stock:
                 self.currency = infos.basic_info.currency
                 self.exchange = infos.basic_info.exchange
                 self.last_price = infos.basic_info.last_price
+                self.timestamp = datetime.now()
             except (NameError, KeyError):
                 print(f"Error : {self.name} online load failed")
 
@@ -105,7 +107,7 @@ class Stock:
                     currency = '{self.currency}',
                     exchange = '{self.exchange}',
                     last_price = {self.last_price},
-                    timestamp = now(),
+                    timestamp = '{self.timestamp}',
                     active = {self.active},
                     nb = {self.nb},
                     sell_price = {self.sell_price or "Null"},
@@ -157,8 +159,9 @@ def load_stocks(online=True, limit = None) -> list:
                 executor.submit(s.load, row, online)
             )
     
-    for s in stocks:
-        s.store()
+    if online:
+        for s in stocks:
+            s.store()
 
     toc = time.perf_counter()
     print(f"Total time: {toc - tic:0.4f} seconds")
