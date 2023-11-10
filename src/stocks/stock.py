@@ -44,11 +44,23 @@ class Stock:
         if self.last_price > 0:
             return self.buy_price / self.last_price -1
     @property
+    def buy_price_gap_percent(self):
+        if not self.buy_price:
+            return -100
+        if self.last_price > 0:
+            return (self.buy_price / self.last_price -1)*100
+    @property
     def sell_price_gap(self):
         if not self.sell_price:
             return .999
         if self.last_price > 0:
             return self.sell_price / self.last_price - 1
+    @property
+    def sell_price_gap_percent(self):
+        if not self.sell_price:
+            return 100
+        if self.last_price > 0:
+            return (self.sell_price / self.last_price - 1)*100
 
     def __str__(self) -> str:
         return f"""{self.name:<20.20s} | {self.buy_price or 0:>7.2f} ({abs(self.buy_price_gap*100):>4.1f}%) | {self.last_price:>10.2f} | {self.sell_price or 0:>7.2f} ({abs(self.sell_price_gap*100):>4.1f}%) | {self.nb:>4} | {self.total_price:>7.2f}"""

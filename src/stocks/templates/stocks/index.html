@@ -23,12 +23,18 @@
         </thead>
         <tbody class="table-dark">
         {% for stock in stocks_list %}
+        {% if stock.buy_price_gap_percent > -5 %}
+            <tr class="table-danger">
+        {% elif stock.sell_price_gap_percent < 5 %}
+            <tr class="table-success">
+        {% else %}
             <tr>
+        {% endif %}
                 <td>{{ stock.name }}</td>
                 <td>{{ stock.code }}</td>
-                <td>{{ stock.buy_price }} ({{ stock.buy_price_gap }})</td>
+                <td>{{ stock.buy_price }}<br>({{ stock.buy_price_gap_percent|floatformat:2 }}%)</td>
                 <td>{{ stock.last_price }}</td>
-                <td>{{ stock.sell_price }} ({{ stock.sell_price_gap }})</td>
+                <td>{{ stock.sell_price }}<br>({{ stock.sell_price_gap_percent|floatformat:2 }})</td>
                 <td>{{ stock.nb }}</td>
                 <td>{{ stock.total_price }}</td>
                 <td>{{ stock.timestamp }}</td>
