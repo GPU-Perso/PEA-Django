@@ -4,11 +4,10 @@ from stocks.stock import load_stocks, Stock
 
 
 # Create your views here.
-def stocks_list(request):
-    data = load_stocks(online=False)
-    return render(request, "stocks/index.html", context={'stocks_list': data})
+def stocks_list(request, online=False):
+    data = load_stocks(bool(online))
+    return render(request, "stocks/index.html", context={'stocks_list': data, "online": online})
 def stock_update(request, code):
     s = Stock(code)
-    s.load()
-    s.store()
+    s.update()
     return render(request, "stocks/row.html", context={'stock': s})

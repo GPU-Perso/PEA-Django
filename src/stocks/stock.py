@@ -134,6 +134,10 @@ class Stock:
         database.conn.commit()
         cursor.close()
 
+    def update(self):
+        self.load()
+        self.store()
+
 def load_stocks(online=True, limit = None) -> list:
     stocks = []
     if not limit:
