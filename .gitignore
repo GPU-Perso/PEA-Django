@@ -1,3 +1,5 @@
 .idea/
 /src/stock/credentials.ini
 /runserver.sh
+__pycache__/
+*.py[cod]
