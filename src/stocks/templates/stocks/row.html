@@ -1,10 +1,9 @@
-<tr>
-    <td>{{ stock.name }}</td>
-    <td>{{ stock.code }}</td>
-    <td>{{ stock.buy_price }} ({{ stock.buy_price_gap }})</td>
-    <td>{{ stock.last_price }}</td>
-    <td>{{ stock.sell_price }} ({{ stock.sell_price_gap }})</td>
-    <td>{{ stock.nb }}</td>
-    <td>{{ stock.total_price }}</td>
-    <td>{{ stock.timestamp }}</td>
-</tr>
+<td>{{ stock.name }}</td>
+<td>{{ stock.code }}</td>
+<td align="right">{{ stock.buy_price }}<br>{{ stock.buy_price_gap_percent|floatformat:2 }}%</td>
+<td align="right">{{ stock.last_price|floatformat:2 }}</td>
+<td align="right">{{ stock.sell_price }}<br>{{ stock.sell_price_gap_percent|floatformat:2 }}</td>
+<td align="right">{{ stock.nb }}</td>
+<td align="right">{{ stock.total_price|floatformat:2 }}</td>
+<td>{{ stock.timestamp }}</td>
+<td class="table-secondary"><a class="update" id="{{ stock.code }}" href="#">Refresh (On)</a></td>
