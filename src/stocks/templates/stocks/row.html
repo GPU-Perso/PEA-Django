@@ -1,8 +1,8 @@
 <td>{{ stock.name }}</td>
 <td>{{ stock.code }}</td>
-<td align="right">{{ stock.buy_price }}<br>{{ stock.buy_price_gap_percent|floatformat:2 }}%</td>
+<td align="right">{{ stock.buy_price }}<br><span style="font-weight: bold; color: LightCoral;">{{ stock.buy_price_gap_percent|floatformat:2 }}%</span></td>
 <td align="right">{{ stock.last_price|floatformat:2 }}</td>
-<td align="right">{{ stock.sell_price }}<br>{{ stock.sell_price_gap_percent|floatformat:2 }}</td>
+<td align="right">{{ stock.sell_price }}<br><span style="font-weight: bold; color: green;">{{ stock.sell_price_gap_percent|floatformat:2 }}%</span></td>
 <td align="right">{{ stock.nb }}</td>
 <td align="right">{{ stock.total_price|floatformat:2 }}</td>
 <td>{{ stock.timestamp }}</td>
