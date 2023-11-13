@@ -52,15 +52,30 @@
 
     <script>
         $(document).ready(function() {
-            $(".update").click(function(event ) {
+            // Bind all update links
+            $(".update").click(function(event) {
                 event.preventDefault();
-                var id = $(this).attr('id');
+                update(this);
+            });
+
+            // Stock Ajax update
+            var update = function(link) {
+                var id = $(link).attr('id');
                 var url = "update/code/"+id;
-                tr = $(this).parents('tr');
+                tr = $(link).parents('tr');
                 $.ajax({url: url,
                 success: function(result) {
                     tr.html(result);
                 }});
+            }
+
+            // Automatic Ajax updates
+            $(".update").each(function(i){
+                var interval = (Math.random()*300 + 60)*1000;
+                var $this = $(this);
+                var t = setInterval(function() {
+                    update($this);
+                }, interval);
             });
         });
     </script>
