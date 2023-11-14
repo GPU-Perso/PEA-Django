@@ -1,6 +1,7 @@
 // Stock Ajax update
 var update = function(link) {
-    event.preventDefault();
+    if(event)
+        event.preventDefault();
     var id = $(link).attr('id');
     var url = "/update/code/"+id;
     console.log(url);
