@@ -61,17 +61,14 @@
             // Stock Ajax update
             var update = function(link) {
                 var id = $(link).attr('id');
-                var url = "update/code/"+id;
-                tr = $(link).parents('tr');
-                $.ajax({url: url,
-                success: function(result) {
-                    tr.html(result);
-                }});
+                var url = "/update/code/"+id;
+                console.log(url);
+                tr = $("#row-"+id).load(url);
             }
 
-            // Automatic Ajax updates
+            // Automatic Ajax updates every 2-4 minutes
             $(".update").each(function(i){
-                var interval = (Math.random()*300 + 60)*1000;
+                var interval = (Math.random()*120 + 120)*1000;
                 var $this = $(this);
                 var t = setInterval(function() {
                     update($this);
