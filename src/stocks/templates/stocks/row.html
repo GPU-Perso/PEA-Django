@@ -6,4 +6,8 @@
 <td align="right">{{ stock.nb }}</td>
 <td align="right">{{ stock.total_price|floatformat:2 }}</td>
 <td>{{ stock.timestamp }}</td>
-<td class="table-secondary"><a class="update" id="{{ stock.code }}" href="#" onclick="update(this)">Refresh (On)</a></td>
+<td class="table-secondary">
+    <a class="update" id="{{ stock.code }}" href="#" onclick="update(this)">🔄</a>
+    <br>
+    <a href="stock_detail/?code={{ stock.code }}">📝</a>
+</td>

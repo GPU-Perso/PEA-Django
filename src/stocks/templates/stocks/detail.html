@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Stock</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+</head>
+<body class="bg-dark">
+    <div class="container">
+        <h1 class="text-light">Edition stock {{ stock.name }}</h1>
+        <form method="get" action="">
+            <fieldset>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend"><span class="input-group-text bg-secondary text-white">Code</span></div>
+                    <input class="form-control" type="text" name="code" required value="{{ stock.code }}" style="background-color: #CEC9C7;"/>
+                </div>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend"><span class="input-group-text bg-secondary text-white">Name</span></div>
+                    <input class="form-control" type="text" name="name" value="{{ stock.name }}" style="background-color: #CEC9C7;"/>
+                </div>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend"><span class="input-group-text bg-secondary text-white">Buy price</span></div>
+                    <input class="form-control" type="text" name="buy_price" value="{{ stock.buy_price }}" style="background-color: #CEC9C7;"/>
+                </div>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend"><span class="input-group-text bg-secondary text-white">Sell price</span></div>
+                    <input class="form-control" type="text" name="sell_price" value="{{ stock.sell_price }}" style="background-color: #CEC9C7;"/>
+                </div>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend"><span class="input-group-text bg-secondary text-white">Number</span></div>
+                    <input class="form-control" type="text" name="nb" value="{{ stock.nb }}" style="background-color: #CEC9C7;"/>
+                </div>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend"><span class="input-group-text bg-secondary text-white">Active</span></div>
+                        <p>&emsp;</p><input class="" type="checkbox" name="active" {% if stock.active %} checked {% endif %}/>
+                </div>
+
+                <div class="input-group mb-3">
+                    <input type="submit" value="Submit" />
+                </div>
+            </fieldset>
+        </form>
+
+        <form method="get" action="/">
+            <fieldset>
+                <div class="input-group mb-3">
+                    <input type="submit" value="Back to the list"/>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+</body>
+</html>

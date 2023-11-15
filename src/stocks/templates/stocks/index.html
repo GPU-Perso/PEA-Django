@@ -19,11 +19,19 @@
             <th scope="col">Sell price</th>
             <th scope="col">Nb</th>
             <th scope="col">Total price</th>
-            <th scope="col">Timestamp</th>
             <th scope="col">
-                <a href="/">Refresh (Off)</a>
-                <br>
-                <a href="/online/True">Refresh (On))</a>
+                <div onclick=" window.location.href = '/'" style="cursor: pointer; display: inline-block;">
+                    Light 🔄
+                </div>
+                &emsp;
+                <div onclick=" window.location.href = '/online/True'" style="cursor: pointer; display: inline-block;">
+                    Hard 🔄
+                </div>
+            </th>
+            <th scope="col">
+                <div onclick=" window.location.href = '/stock_detail/?code='" style="cursor: pointer; display: inline-block;">
+                    ➕
+                </div>
             </th>
         </tr>
         </thead>
@@ -36,15 +44,7 @@
         {% else %}
             <tr id="row-{{ stock.code }}">
         {% endif %}
-                <td>{{ stock.name }}</td>
-                <td>{{ stock.code }}</td>
-                <td align="right">{{ stock.buy_price }}<br><span style="font-weight: bold; color: LightCoral;">{{ stock.buy_price_gap_percent|floatformat:2 }}%</span></td>
-                <td align="right">{{ stock.last_price|floatformat:2 }}</td>
-                <td align="right">{{ stock.sell_price }}<br><span style="font-weight: bold; color: green;">{{ stock.sell_price_gap_percent|floatformat:2 }}%</span></td>
-                <td align="right">{{ stock.nb }}</td>
-                <td align="right">{{ stock.total_price|floatformat:2 }}</td>
-                <td>{{ stock.timestamp }}</td>
-                <td class="table-secondary"><a class="update" id="{{ stock.code }}" href="#" onclick="update(this)">Refresh (On)</a></td>
+            {% include 'stocks/row.html' with stock=stock %}
             </tr>
         {% endfor %}
         </tbody>

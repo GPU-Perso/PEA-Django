@@ -107,6 +107,9 @@ class Stock:
         print(f"{self.name} load time: {toc - tic:0.4f} seconds")
 
     def store(self):
+        if len(self.code) < 2:
+            return
+
         query = f"select count(*) from stocks where id={self.id}"
         cursor = database.conn.cursor()
         cursor.execute(query)
