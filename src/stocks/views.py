@@ -17,7 +17,6 @@ def stock_update(request, code):
 
 def show_stock(request):
     params = request.GET
-    print(params)
     if "code" in params:
         s = Stock(params["code"])
         s.load()
@@ -30,6 +29,12 @@ def show_stock(request):
                 s.active = True
             else:
                 s.active = False
+            if "is_etf" in params and params["is_etf"] == "on":
+                s.is_etf = True
+            else:
+                s.is_etf = False
+            s.link = params["link"]
+
         s.store()
     else:
         code = ""

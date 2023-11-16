@@ -19,6 +19,10 @@
                     <input class="form-control" type="text" name="name" value="{{ stock.name }}" style="background-color: #CEC9C7;"/>
                 </div>
                 <div class="input-group mb-3">
+                    <div class="input-group-prepend"><span class="input-group-text bg-secondary text-white">Link</span></div>
+                    <input class="form-control" type="text" name="link" value="{{ stock.link }}" style="background-color: #CEC9C7;"/>
+                </div>
+                <div class="input-group mb-3">
                     <div class="input-group-prepend"><span class="input-group-text bg-secondary text-white">Buy price</span></div>
                     <input class="form-control" type="text" name="buy_price" value="{{ stock.buy_price }}" style="background-color: #CEC9C7;"/>
                 </div>
@@ -29,6 +33,10 @@
                 <div class="input-group mb-3">
                     <div class="input-group-prepend"><span class="input-group-text bg-secondary text-white">Number</span></div>
                     <input class="form-control" type="text" name="nb" value="{{ stock.nb }}" style="background-color: #CEC9C7;"/>
+                </div>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend"><span class="input-group-text bg-secondary text-white">ETF</span></div>
+                        <p>&emsp;</p><input class="" type="checkbox" name="is_etf" {% if stock.is_etf %} checked {% endif %}/>
                 </div>
                 <div class="input-group mb-3">
                     <div class="input-group-prepend"><span class="input-group-text bg-secondary text-white">Active</span></div>
