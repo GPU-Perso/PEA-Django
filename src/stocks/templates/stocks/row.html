@@ -1,4 +1,18 @@
-<td><a href="{{ stock.link }}">{{ stock.name }}</a></td>
+{% load mathfilters %}
+<td>
+    <a href="{{ stock.link }}">{{ stock.name }}</a>
+    {% if stock.trend_percent %}
+        {% if stock.trend_percent >= 0 %}
+        <span style="float: right; font-weight: bold; color: green;">
+            +
+        {% else %}
+        <span style="float: right; font-weight: bold; color: LightCoral;">
+            -
+        {% endif %}
+            {{ stock.trend_percent|floatformat:2|abs }}%
+        </span>
+    {% endif %}
+</td>
 <td>{{ stock.code }}</td>
 <td align="right">{{ stock.buy_price }}<br><span style="font-weight: bold; color: LightCoral;">{{ stock.buy_price_gap_percent|floatformat:2 }}%</span></td>
 <td align="right">{{ stock.last_price|floatformat:2 }}</td>

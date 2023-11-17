@@ -21,10 +21,19 @@ def show_stock(request):
         s = Stock(params["code"])
         s.load()
         if "buy_price" in params:
-            s.buy_price = float(params["buy_price"])
-            s.sell_price = float(params["sell_price"])
+            try:
+                s.buy_price = float(params["buy_price"])
+            except (ValueError):
+                s.buy_price = 0
+            try:
+                s.sell_price = float(params["sell_price"])
+            except (ValueError):
+                s.sell_price = 0
+            try:
+                s.nb = int(params["nb"])
+            except (ValueError):
+                s.nb = 0
             s.name = params["name"]
-            s.nb = int(params["nb"])
             if "active" in params and params["active"] == "on":
                 s.active = True
             else:

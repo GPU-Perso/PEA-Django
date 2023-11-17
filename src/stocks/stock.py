@@ -44,6 +44,7 @@ class Stock:
         self.id = 0
         self.is_etf = False
         self.link = ""
+        self.trend_percent = None
 
     @property
     def total_price(self):
@@ -114,10 +115,11 @@ class Stock:
         if online:
             try:
                 infos = yf.Ticker(self.code)
-                self.currency = infos.basic_info.currency
-                self.exchange = infos.basic_info.exchange
-                self.last_price = infos.basic_info.last_price
+                self.currency = infos.fast_info.currency
+                self.exchange = infos.fast_info.exchange
+                self.last_price = infos.fast_info.last_price
                 self.timestamp = datetime.now()
+                self.trend_percent = (infos.fast_info.last_price/infos.fast_info.previous_close - 1) * 100
             except (NameError, KeyError):
                 print(f"Error : {self.name} online load failed")
 
