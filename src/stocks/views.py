@@ -1,12 +1,17 @@
 from django.shortcuts import render
 
+from stocks import stock
 from stocks.stock import load_stocks, Stock
 
 
 # Create your views here.
 def stocks_list(request, online=False):
     data = load_stocks(bool(online))
-    return render(request, "stocks/index.html", context={'stocks_list': data, "online": online})
+    return render(request, "stocks/index.html", context={
+        'stocks_list': data, "online": online, 'stock_interval_min': stock.UPDATE_STOCK_DELAY_MIN,
+        'stock_interval_max': stock.UPDATE_STOCK_DELAY_MAX,'etf_interval_min': stock.UPDATE_ETF_DELAY_MIN,
+        'etf_interval_max': stock.UPDATE_ETF_DELAY_MAX
+    })
 
 
 def stock_update(request, code):

@@ -21,7 +21,7 @@
 <td align="right">{{ stock.total_price|floatformat:2 }}</td>
 <td>{{ stock.timestamp }}</td>
 <td class="table-secondary">
-    <a class="update" id="{{ stock.code }}" href="#" onclick="update(this)">🔄</a>
+    <a class="update{% if stock.is_etf %} etf{% else %} stock{% endif %}" id="{{ stock.code }}" href="#" onclick="update(this)">🔄</a>
     <br>
     <a href="stock_detail/?code={{ stock.code }}">📝</a>
 </td>
