@@ -1,7 +1,6 @@
 from stocks.connectdb import Database
 import yfinance as yf
 
-import threading
 import concurrent.futures
 import time
 from datetime import datetime
@@ -26,6 +25,15 @@ UPDATE_STOCK_DELAY_MAX = config.get("UpdateDelays", "StockMax")
 UPDATE_ETF_DELAY_MIN = config.get("UpdateDelays", "ETFMin")
 UPDATE_ETF_DELAY_MAX = config.get("UpdateDelays", "ETFMax")
 
+# alarms
+GAP_THRESHOLD = int(config.get("Alarms", "GapThreshold"))
+EMAIL = config.get("Alarms", "EMail")
+EMAIL_MASK = config.get("Alarms", "EMailMask")
+ALARM_TYPE_GAP_UP = 1
+ALARM_TYPE_GAP_DOWN = 2
+ALARM_TYPE_BUY = 3
+ALARM_TYPE_SELL = 4
+
 database = Database(HOST, DATABASE, DB_USER, DB_USER_PASSWORD)
 
 
@@ -44,7 +52,7 @@ class Stock:
         self.id = 0
         self.is_etf = False
         self.link = ""
-        self.trend_percent = None
+        self.trend_percent = 0
 
     @property
     def total_price(self):
@@ -80,8 +88,6 @@ class Stock:
 
     def __str__(self) -> str:
         return f"""{self.name:<20.20s} | {self.buy_price or 0:>7.2f} ({abs(self.buy_price_gap * 100):>4.1f}%) | {self.last_price:>10.2f} | {self.sell_price or 0:>7.2f} ({abs(self.sell_price_gap * 100):>4.1f}%) | {self.nb:>4} | {self.total_price:>7.2f}"""
-        return f"""{self.code} | {self.name} | {self.currency} | {self.exchange} | {self.last_price} | {self.timestamp} | {self.active} | {self.nb} | {self.sell_price} | {self.buy_price} | {self.id}\n
-            Total : {self.total_price} | Buy gap : {self.buy_price_gap} | Sell gap : {self.sell_price_gap}"""
 
     def load(self, data=None, online=True):
         tic = time.perf_counter()
@@ -119,7 +125,7 @@ class Stock:
                 self.exchange = infos.fast_info.exchange
                 self.last_price = infos.fast_info.last_price
                 self.timestamp = datetime.now()
-                self.trend_percent = (infos.fast_info.last_price/infos.fast_info.previous_close - 1) * 100
+                self.trend_percent = (infos.fast_info.last_price / infos.fast_info.previous_close - 1) * 100
             except (NameError, KeyError):
                 print(f"Error : {self.name} online load failed")
 
@@ -164,6 +170,54 @@ class Stock:
     def update(self):
         self.load()
         self.store()
+        self.set_alarm()
+
+    def set_alarm(self):
+        query = insert_query = ""
+        cursor = database.conn.cursor()
+        alarm_type = []
+
+        # gap alarm up
+        if self.trend_percent > GAP_THRESHOLD:
+            query = f"""select count(id) from alerts a 
+                where a.stock_id = {self.id} and alarm_type = {ALARM_TYPE_GAP_UP}
+                and (acknowledgement = false or DATE(a.acknowledgement_timestamp) = CURRENT_DATE) """
+            cursor.execute(query)
+            if cursor.fetchone()[0] == 0:
+                alarm_type.append(ALARM_TYPE_GAP_UP)
+        # gap alarm up
+        elif self.trend_percent < - GAP_THRESHOLD:
+            query = f"""select count(id) from alerts a 
+                where a.stock_id = {self.id} and alarm_type = {ALARM_TYPE_GAP_DOWN}
+                and (acknowledgement = false or DATE(a.acknowledgement_timestamp) = CURRENT_DATE) """
+            cursor.execute(query)
+            if cursor.fetchone()[0] == 0:
+                alarm_type.append(ALARM_TYPE_GAP_DOWN)
+        # buy alarm
+        if self.buy_price_gap > 0:
+            query = f"""select count(id) from alerts a 
+                where a.stock_id = {self.id} and alarm_type = {ALARM_TYPE_BUY}
+                and (acknowledgement = false or DATE(a.acknowledgement_timestamp) = CURRENT_DATE) """
+            cursor.execute(query)
+            if cursor.fetchone()[0] == 0:
+                alarm_type.append(ALARM_TYPE_BUY)
+        # sell alarm
+        elif self.sell_price_gap < 0:
+            query = f"""select count(id) from alerts a 
+                where a.stock_id = {self.id} and alarm_type = {ALARM_TYPE_SELL}
+                and (acknowledgement = false or DATE(a.acknowledgement_timestamp) = CURRENT_DATE) """
+            cursor.execute(query)
+            if cursor.fetchone()[0] == 0:
+                alarm_type.append(ALARM_TYPE_SELL)
+
+        if len(alarm_type) > 0:
+            for at in alarm_type:
+                query = f"""insert into alerts (alarm_type, stock_id) 
+                VALUES ( {alarm_type.pop()}, {self.id})"""
+                cursor.execute(query)
+            database.conn.commit()
+
+        cursor.close()
 
 
 def load_stocks(online=True, limit=None) -> list:
@@ -224,14 +278,21 @@ if __name__ == "__main__":
     # stock.load()
     # print(stock)
     # stock.store()
+    #
+    # stocks = load_stocks()
+    # print(f"""{"Name":<20.20s} | buy_price       | Last_price | sell_price      | nb   | total_price""")
+    # print("-" * 100)
+    # for s in stocks:
+    #     if s.buy_price_gap and s.buy_price_gap > -0.05:
+    #         print(colored(s, "red"))
+    #     elif s.sell_price_gap and s.sell_price_gap < 0.05:
+    #         print(colored(s, "green"))
+    #     else:
+    #         print(s)
 
-    stocks = load_stocks()
-    print(f"""{"Name":<20.20s} | buy_price       | Last_price | sell_price      | nb   | total_price""")
-    print("-" * 100)
-    for s in stocks:
-        if s.buy_price_gap and s.buy_price_gap > -0.05:
-            print(colored(s, "red"))
-        elif s.sell_price_gap and s.sell_price_gap < 0.05:
-            print(colored(s, "green"))
-        else:
-            print(s)
+    s = Stock('FR0014003U94')
+    s.load(online=False)
+    s.trend_percent = 70
+    s.buy_price = s.last_price + 1
+    s.sell_price = s.last_price - 1
+    s.set_alarm()
