@@ -212,8 +212,16 @@ class Stock:
 
         if len(alarm_type) > 0:
             for at in alarm_type:
-                query = f"""insert into alerts (alarm_type, stock_id) 
-                VALUES ( {alarm_type.pop()}, {self.id})"""
+                if at == ALARM_TYPE_GAP_UP:
+                    message = f"Stock {self.name} increased for more than {GAP_THRESHOLD}% today"
+                elif at == ALARM_TYPE_GAP_DOWN:
+                    message = f"Stock {self.name} decreased for more than {GAP_THRESHOLD}% today"
+                elif at == ALARM_TYPE_BUY:
+                    message = f"Buy alert on stock {self.name}"
+                else:
+                    message = f"Sell alert on stock {self.name}"
+                query = f"""insert into alerts (alarm_type, stock_id, info) 
+                VALUES ( {alarm_type.pop()}, {self.id}, '{message}')"""
                 cursor.execute(query)
             database.conn.commit()
 
