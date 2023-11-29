@@ -13,7 +13,7 @@ multitasking==0.0.11
 numpy==1.26.1
 pandas==2.1.2
 peewee==3.17.0
-psycopg2==2.9.9
+psycopg2-binary==2.9.9
 python-dateutil==2.8.2
 pytz==2023.3.post1
 requests==2.31.0
