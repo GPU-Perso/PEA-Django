@@ -1,7 +1,9 @@
+from typing import List, Tuple, Any
+
 from django.shortcuts import render
 
 from stocks import stock
-from stocks.stock import load_stocks, Stock
+from stocks.stock import load_stocks, Stock, list_alerts
 
 
 # Create your views here.
@@ -19,6 +21,13 @@ def stock_update(request, code):
     s.update()
     return render(request, "stocks/row.html", context={'stock': s})
 
+def show_alerts(request):
+    alerts = list_alerts()
+    return render(request, "stocks/alerts.html", context={'alerts': alerts})
+
+def acknowledge_alert(request, id):
+    stock.acknowledge_alert(id)
+    return show_alerts(request)
 
 def show_stock(request):
     params = request.GET

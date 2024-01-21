@@ -7,8 +7,12 @@ class Database:
         self.database = database
         self.user = user
         self.password = password
+        self.conn = None
 
-        self.conn = psycopg2.connect(host=self.host, database=self.database, user=self.user, password=self.password)
+    def get_conn(self):
+        if not self.conn or self.conn.closed:
+            self.conn = psycopg2.connect(host=self.host, database=self.database, user=self.user, password=self.password)
+        return self.conn
 
     def __del__(self):
         if self.conn is not None:

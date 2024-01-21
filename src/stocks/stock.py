@@ -36,7 +36,6 @@ ALARM_TYPE_SELL = 4
 
 database = Database(HOST, DATABASE, DB_USER, DB_USER_PASSWORD)
 
-
 class Stock:
     def __init__(self, code="") -> None:
         self.code = code
@@ -92,7 +91,7 @@ class Stock:
     def load(self, data=None, online=True):
         tic = time.perf_counter()
         if data is None:
-            cursor = database.conn.cursor()
+            cursor = database.get_conn().cursor()
             cursor.execute(f"""
                 select code, name, currency, exchange, last_price, timestamp, active, 
                     nb, sell_price, buy_price, id, etf, link 
@@ -137,7 +136,7 @@ class Stock:
             return
 
         query = f"select count(*) from stocks where id={self.id}"
-        cursor = database.conn.cursor()
+        cursor = database.get_conn().cursor()
         cursor.execute(query)
         if cursor.fetchone()[0] > 0:
             cursor.execute(f"""
@@ -164,7 +163,7 @@ class Stock:
                     now(), {self.active}, {self.nb}, {self.sell_price or "Null"}, {self.buy_price or "Null"},
                     {self.is_etf}, '{self.link}')
             """)
-        database.conn.commit()
+        database.get_conn().commit()
         cursor.close()
 
     def update(self):
@@ -174,7 +173,7 @@ class Stock:
 
     def set_alarm(self):
         query = insert_query = ""
-        cursor = database.conn.cursor()
+        cursor = database.get_conn().cursor()
         alarm_type = []
 
         # gap alarm up
@@ -227,6 +226,20 @@ class Stock:
 
         cursor.close()
 
+def list_alerts():
+    query = (f"""select id, stock_id, info, alarm_type from alerts where acknowledgement = FALSE""")
+    cursor = database.get_conn().cursor()
+    cursor.execute(query)
+    alerts = cursor.fetchall()
+    cursor.close()
+    return alerts
+
+def acknowledge_alert(id):
+    query = f"update alerts set acknowledgement = TRUE, acknowledgement_timestamp = now() where id={id} "
+    cursor = database.get_conn().cursor()
+    cursor.execute(query)
+    database.conn.commit()
+    cursor.close()
 
 def load_stocks(online=True, limit=None) -> list:
     stocks = []
@@ -254,7 +267,7 @@ def load_stocks(online=True, limit=None) -> list:
                 order by rank asc limit {limit}
             """
 
-    cursor = database.conn.cursor()
+    cursor = database.get_conn().cursor()
     cursor.execute(query)
     rows = cursor.fetchall()
     cursor.close()
@@ -273,6 +286,7 @@ def load_stocks(online=True, limit=None) -> list:
     if online:
         for s in stocks:
             s.store()
+            s.set_alarm()
 
     toc = time.perf_counter()
     print(f"Total time: {toc - tic:0.4f} seconds")
@@ -304,3 +318,10 @@ if __name__ == "__main__":
     s.buy_price = s.last_price + 1
     s.sell_price = s.last_price - 1
     s.set_alarm()
+    query = (f"""select id from alerts 
+             where acknowledgement = FALSE and stock_id = {s.id} """)
+    cursor = database.get_conn().cursor()
+    cursor.execute(query)
+    id = cursor.fetchone()[0]
+    cursor.close()
+    acknowledge_alert(id)

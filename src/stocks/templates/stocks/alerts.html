@@ -1,0 +1,36 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Alerts</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+    <script src="{% static 'update.js' %}"></script>
+</head>
+<body class="bg-dark">
+<table class="table table-striped" style="position: relative;">
+        <thead class="table-secondary" style="position: sticky;top: 0;">
+        <tr>
+            <th scope="col">Message</th>
+            <th scope="col">Acknowledge</th>
+        </tr>
+        </thead>
+        <tbody class="table-dark">
+            {% for alert in alerts %}
+                <tr>
+                    <td>{{ alert.2 }}</td>
+                    <td><a href="/acknowledge_alert/id/{{ alert.0 }}">Acknowledge</a></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+        <form method="get" action="/">
+            <fieldset>
+                <div class="input-group mb-3">
+                    <input type="submit" value="Back to the list"/>
+                </div>
+            </fieldset>
+        </form>
+</body>
+</html>
