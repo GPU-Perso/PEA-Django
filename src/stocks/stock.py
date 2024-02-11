@@ -127,6 +127,9 @@ class Stock:
                 self.trend_percent = (infos.fast_info.last_price / infos.fast_info.previous_close - 1) * 100
             except (NameError, KeyError):
                 print(f"Error : {self.name} online load failed")
+            except Exception as err:
+                print("Generic error")
+                pass
 
         toc = time.perf_counter()
         print(f"{self.name} load time: {toc - tic:0.4f} seconds")
